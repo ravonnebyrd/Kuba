@@ -213,6 +213,13 @@ class KubaGame:
         self.get_board().set_previous(self.get_board().get_board())
         self.get_board().set_board(self.get_board().get_possible())
 
+        # If applicable, update the Player's captured marble count.
+        if popped == 'R':
+            if playername == self.get_player_a().get_name():
+                self.get_player_a().increment_captured()
+            else:
+                self.get_player_b().increment_captured()
+
         # Update the Board's marble count.
         if popped == 'R':
             self.get_board().decrement_count_red()
@@ -220,13 +227,6 @@ class KubaGame:
             self.get_board().decrement_count_black()
         if popped == 'W':
             self.get_board().decrement_count_white()
-
-        # If applicable, update the Player's captured marble count.
-        if popped == 'R':
-            if playername == self.get_player_a().get_name():
-                self.get_player_a().increment_captured()
-            else:
-                self.get_player_b().increment_captured()
 
         # Evaluate a win by player's captured count.
             # If win, set new winner.

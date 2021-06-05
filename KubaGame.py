@@ -15,7 +15,7 @@ DETAILED TEXT DESCRIPTIONS OF HOW TO HANDLE THE SCENARIOS
 
 3. Determining how to validate a move.
     3A. Boolean check that the game has not already been won, by calling self.get_winner().
-    3B. Boolean check that is actually the player's turn, by equating plaername and the result of self.get_next_turn().
+    3B. Boolean check that is actually the player's turn, by equating playername and the result of self.get_next_turn().
     3C. Boolean check that the coordinates are valid, by seeing if desired coordinate is in
      list from self.get_board().get_coordinates().
     3D. Check that the possibly pushed off marble is not the player's own color.
@@ -157,8 +157,8 @@ class KubaGame:
         :return: Marble color: 'R', 'B', or 'W'.
                  Else, 'X' for no marble.
         """
-        x, y = coordinates
-        return self._board.get_board()[x][y]
+        row, column = coordinates
+        return self._board.get_board()[row][column]
 
     def get_marble_count(self):
         """
@@ -173,11 +173,18 @@ class KubaGame:
     def set_turn(self, playername):
         """
         Purpose: To set the self._turn attribute to the opposing Player object playername.
-
         :param playername: The playername of the Player object whose turn it is next.
         :return: None
         """
         self._current_turn = playername
+
+    def set_winner(self, playername):
+        """
+        Purpose: To set the self._winner attribute to the winning Player.
+        :param playername: The playername of the Player who has won.
+        :return: None
+        """
+        self._winner = playername
 
     # other methods
     def make_move(self, playername, coordinates, direction):
@@ -185,28 +192,149 @@ class KubaGame:
         Purpose:
             *Note: A push only shifts the affected marbles one spot.
                   Thus, only one marble can get knocked off per turn.
-                  Up to six marbles can be pushed by the named player's marble at one time - unless every slot
-                    in a column is full with 'R', 'B', or 'W', then a player can push the whole column, if a valid move.
 
         :param playername: Name of the player (ONLY)
         :param coordinates: Tuple - (row_number, col_number)
         :param direction: Direction the player wants to push the marble.
                           'L'(Left), 'R'(Right), 'F'(Forward) and 'B'(Backward)
         :return: True if the move is successful.
-                 False if: The game has already been won.
-                           If it is not the named player's turn.
-                           If the coordinates are invalid.
-                           If the marble in that coordinate cannot move in that direction
-                                Such as: a move that undoes the opponent's move.
-                                         a move that results in knocking off the named player's own marble.
-                                         a ball that is blocked from that direction.
-                                            (i.e. right is blocked, so can't move 'L')
-                           If the marble in that coordinate is not the named player's marble.
-                                A player can only directly push their own marble
-                                *Note: Any marble can be pushed indirectly.
-                           Or for any other other invalid condition.
+                 False for invalid conditions.
         """
-        pass
+        # Invalid self.make_move() conditions:
+        # A player has already won.
+        if self.get_winner() is not None:
+            return False
+
+        # Can only continue if self._current_turn is None or equals the playername parameter.
+        if self.get_current_turn() is not None and self.get_current_turn() != playername:
+            return False
+
+        # The coordinates are invalid.
+        if coordinates not in self.get_board().get_coordinates():
+            return False
+
+        # The desired marble is not of the playername parameter's color.
+        if playername == self.get_player_a().get_name():
+            if self.get_marble(coordinates) != self.get_player_a().get_color():
+                return False
+        else:
+            if self.get_marble(coordinates) != self.get_player_b().get_color():
+                return False
+
+        # If marble is surrounded, declare game winner and return False.
+        if not self.check_right(coordinates) and not self.check_left(coordinates) and not \
+                self.check_bottom(coordinates) and not self.check_top(coordinates):
+            if playername == self.get_player_a().get_name():
+                self.set_winner(self.get_player_b().get_name())
+                return False
+            else:
+                self.set_winner(self.get_player_a().get_name())
+                return False
+
+        # if direction is 'L', and player has a marble blocking to the right
+        if direction == 'L':
+            if not self.check_right(coordinates):
+                return False
+
+        # if direction is 'R', and player has a marble blocking to the left
+        if direction == 'R':
+            if not self.check_left(coordinates):
+                return False
+
+        # if direction is 'F', and player has a marble blocking to the bottom
+        if direction == 'F':
+            if not self.check_bottom(coordinates):
+                return False
+        # if direction is 'B', and player has a marble blocking to the top
+        if direction == 'B':
+            if not self.check_top(coordinates):
+                return False
+
+        # A move that undoes the opponent's move (Ko Rule).
+
+        # Do the pretend move.
+
+            # Evaluate if it is a move that results in knocking off the named player's own marble.
+            # If so, return False.
+
+        # At this point, move is officially valid.
+
+        # Make the move.
+
+        # Update the Board's marble count.
+
+        # If applicable, update the Player's captured marble count.
+
+        # In the Board object, set the new current board and new previous board.
+
+        # Evaluate a win by player's captured count.
+            # If win, set new winner.
+        if playername == self.get_player_a():
+            if self.get_player_a().get_captured() == 7:
+                self.set_winner(playername)
+        else:
+            if self.get_player_b().get_captured() == 7:
+                self.set_winner(playername)
+
+        # Set turn to next player.
+        if playername == self.get_player_a().get_name():
+            self.set_turn(self.get_player_b().get_name())
+        else:
+            self.set_turn(self.get_player_a().get_name())
+
+        return True
+
+    def check_right(self, coordinates):
+        """
+        Purpose: This method checks if there is a valid space to the right of a marble for a valid pushing move.
+        :param coordinates: Tuple - (row_number, col_number)
+        :return: True if move is possible
+                 False if move is invalid, marble block
+        """
+        row, column = coordinates
+        column += 1
+        if column < 7 and self.get_marble((row, column)) != 'X':
+            return False
+        return True
+
+    def check_left(self, coordinates):
+        """
+        Purpose: This method checks if there is a valid space to the left of a marble for a valid pushing move.
+        :param coordinates: Tuple - (row_number, col_number)
+        :return: True if move is possible
+                 False if move is invalid, marble block
+        """
+        row, column = coordinates
+        column -= 1
+        if column > -1 and self.get_marble((row, column)) != 'X':
+            return False
+        return True
+
+    def check_bottom(self, coordinates):
+        """
+        Purpose: This method checks if there is a valid space to the bottom of a marble for a valid pushing move.
+        :param coordinates: Tuple - (row_number, col_number)
+        :return: True if move is possible
+                 False if move is invalid, marble block
+        """
+        row, column = coordinates
+        row += 1
+        if row < 7 and self.get_marble((row, column)) != 'X':
+            return False
+        return True
+
+    def check_top(self, coordinates):
+        """
+        Purpose: This method checks if there is a valid space to the top of a marble for a valid pushing move.
+        :param coordinates: Tuple - (row_number, col_number)
+        :return: True if move is possible
+                 False if move is invalid, marble block
+        """
+        row, column = coordinates
+        row -= 1
+        if row > -1 and self.get_marble((row, column)) != 'X':
+            return False
+        return True
 
 
 class Board:
@@ -429,14 +557,7 @@ class Player:
 
 def main():
     """TODO"""
-    b = KubaGame(('Sarah', 'B'), ('PlayerB', 'W'))
-    print(b.get_marble_count())
-    print(b.get_marble((2, 0)))
-    print(b.get_player_a().get_name())
-    print(b.get_player_b().get_color())
-    print(b.get_player_b().get_captured())
-    b.get_player_b().increment_captured()
-    print(b.get_player_b().get_captured())
+    b = KubaGame(('Sarah', 'B'), ('Jamal', 'W'))
 
 
 if __name__ == '__main__':

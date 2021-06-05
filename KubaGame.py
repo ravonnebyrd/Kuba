@@ -1,68 +1,9 @@
 # Author: Ravonne Byrd
 # Date: June 2, 2021
-# Description: Halfway Progress Report
-
-"""
-DETAILED TEXT DESCRIPTIONS OF HOW TO HANDLE THE SCENARIOS
-
-1. Initializing the board
-        The board will be initialized as a list of lists inside the Board class. The beginning marble setup will be
-    hardcoded into this major list - i.e. ['W', 'W', 'X', 'X', 'X', 'B', 'B'] will be the first list in the list.
-
-2. Determining how to track which player's turn it is to play right now.
-        Inside the make_move() method. At the end of a successful, valid move, before exiting the method,
-    make_move() will use an if/else statement to set the turn to the next player, by using the set_next_turn() method.
-
-3. Determining how to validate a move.
-    3A. Boolean check that the game has not already been won, by calling self.get_winner().
-    3B. Boolean check that is actually the player's turn, by equating playername and the result of self.get_next_turn().
-    3C. Boolean check that the coordinates are valid, by seeing if desired coordinate is in
-     list from self.get_board().get_coordinates().
-    3D. Check that the possibly pushed off marble is not the player's own color.
-    3E. Check that the marble to move is actually the player's marble.
-    3F. Check that the marble isn't blocked on its side the direction is pushing off of. This require checking that
-        the marble is either on an edge, or that there isn't another marble in that space, or that the marble is not
-        surrounded.
-    3G. Boolean check that resulting move won't recreate the same board immediately previous.
-        Do this by checking self.get_board().get_previous() against sle.get_board().get_possible().
-
-4. Determine how to return the marble count.
-
-    4A. Inside the KubaGame class' get_marble_count(), it will use the Board object's method get_count() to
-    get the 3-tuple.For example:
-        self.get_board().get_count()
-    will return the marble count. It will be inside KubaGame's get_marble_count() method.
-
-        4A.1. The Board object's method get_count() will utilize get_count_white(), get_count_black(), get_count_red()
-        to create this 3-tuple. For example:
-            return self.get_count_white(), self.get_count_black(), self. get_count_red()
-        will be inside the Board's get_count() method.
-
-        4A.2. The marble counts on the board will be updated after every successful move, in the KubaGame make_move()
-        method, if a move results in a marble being captured or knocked off the board.
-        In order to do this I would need to:
-            1. Check that there are no empty spaces between the player's marble, and the edge in the direction
-            the marbles will be pushed.
-            2. Store the marble being pushed in a temporary variable. (using pop() method).
-            3. Depending on what that temporary variable equals, I will chose the most appropriate Board object
-            method: decrement_count_white(), decrement_count_black(), or decrement_count_red().
-            4. If pushed marble is 'R', I will also need to update the Player's captured count.
-
-5. Determine how to move the marbles on the board.
-    Check that marble isn't surrounded.
-    Check that marble isn't the opponent's color.
-    Check that marble is clear from the side being pushed on.
-    5A. If direction is 'L', player must shift affected marbles left, one space. This can be done by iterating through
-    the list and changing the index's of affected marbles to the previous index, until a marble is pushed off or a white
-    space is encountered. .
-    5B. If direction is 'R', player must shift affected marbles right, one space. This can be done by iterating through
-    the list and changing the index's of affected marbles to the next index, until a marble is pushed off or a white
-    space is encountered.
-    5C. If the direction is 'F', transpose the board using the list() map() and zip() functions, and treat as if going
-    right.
-    5D. If the direction is 'B', transpose the board using the list() map() and zip() functions, and treat as if going
-    left.
-"""
+# Description: The KubaGame class represents a game round of Kuba. It uses helper classes Board and
+#              Player to instantiate the board and player objects. The goal of the game is to be the first player to
+#              capture 7 red marbles, in order to win. Although not required, a win can also be achieved by the opposing
+#              player being blocked from making any valid moves.
 import copy
 
 
@@ -250,22 +191,42 @@ class KubaGame:
             if not self.check_top(coordinates):
                 return False
 
-        # A move that undoes the opponent's move (Ko Rule).
-
         # Do the pretend move.
+        popped = self.get_board().fake_move(coordinates, direction)
 
-            # Evaluate if it is a move that results in knocking off the named player's own marble.
-            # If so, return False.
+        # Evaluate if it is a move that results in knocking off the named player's own marble.
+        # If so, return False.
+        if playername == self.get_player_a().get_name():
+            if popped == self.get_player_a().get_color():
+                return False
+        else:
+            if popped == self.get_player_b().get_color():
+                return False
+
+        # A move that undoes the opponent's move (Ko Rule).
+        if self.get_board().get_possible() == self.get_board().get_previous():
+            return False
 
         # At this point, move is officially valid.
 
-        # Make the move.
+        # Update the previous and current boards
+        self.get_board().set_previous(self.get_board().get_board())
+        self.get_board().set_board(self.get_board().get_possible())
 
         # Update the Board's marble count.
+        if popped == 'R':
+            self.get_board().decrement_count_red()
+        if popped == 'B':
+            self.get_board().decrement_count_black()
+        if popped == 'W':
+            self.get_board().decrement_count_white()
 
         # If applicable, update the Player's captured marble count.
-
-        # In the Board object, set the new current board and new previous board.
+        if popped == 'R':
+            if playername == self.get_player_a().get_name():
+                self.get_player_a().increment_captured()
+            else:
+                self.get_player_b().increment_captured()
 
         # Evaluate a win by player's captured count.
             # If win, set new winner.
@@ -283,6 +244,10 @@ class KubaGame:
             self.set_turn(self.get_player_a().get_name())
 
         return True
+
+    def make_move_helper(self):
+        """TODO"""
+        pass
 
     def check_right(self, coordinates):
         """
@@ -399,7 +364,6 @@ class Board:
     def get_possible(self):
         """
         Purpose: To return the possible board.
-
         :return: The list of lists of the possible board.
         """
         return self._possible
@@ -441,34 +405,95 @@ class Board:
         return self._coordinates
 
     # set methods
-    def set_board(self):
+    def set_board(self, board):
         """
-        Purpose: To set the current self._board
-
+        Purpose: To set the current self._board.
+        :param board: A game board.
         :return: None
         """
-        pass
+        self._board = board
 
-    def set_previous(self):
+    def set_previous(self, board):
         """
         Purpose: To set the previous board.
-
+        :param board: A game board.
         :return: None
         """
-        pass
+        self._previous = board
 
-    def set_possible(self, playername, coordinates, direction):
+    def set_possible(self, board):
+        """
+        Purpose: To set the self._possible with the board if the player possibly made this move.
+        :param board: A game board.
+        :return: None
+        """
+        self._possible = board
+
+    def fake_move(self, coordinates, direction):
         """
         Purpose: To set the immediately possible board.
         Do this by creating a deepcopy of the self.get_board() and making the move
 
-        :param playername: Name of the player (ONLY)
         :param coordinates: Tuple - (row_number, col_number)
         :param direction: Direction the player wants to push the marble.
                           'L'(Left), 'R'(Right), 'F'(Forward) and 'B'(Backward)
-        :return: None
+        :return: popped - the marble that was popped from the array
         """
-        pass
+        popped = None
+        temp_1 = None
+        row, column = coordinates
+        column_move = column
+        row_move = row
+
+        board_copy = copy.deepcopy(self.get_board())
+
+        # Left
+        if direction == 'L':
+            while temp_1 != 'X' and column_move > 0:
+                temp_1 = board_copy[row][column_move]
+                column_move -= 1
+                if column_move == 0 and board_copy[row][column_move] != 'X':
+                    popped = board_copy[row][column_move]
+                temp_2 = board_copy[row][column_move]
+                board_copy[row][column_move] = temp_1
+                temp_1 = temp_2
+
+        # Right
+        if direction == 'R':
+            while temp_1 != 'X' and column_move < 6:
+                temp_1 = board_copy[row][column_move]
+                column_move += 1
+                if column_move == 6 and board_copy[row][column_move] != 'X':
+                    popped = board_copy[row][column_move]
+                temp_2 = board_copy[row][column_move]
+                board_copy[row][column_move] = temp_1
+                temp_1 = temp_2
+
+        # Forwards
+        if direction == 'F':
+            while temp_1 != 'X' and row_move > 0:
+                temp_1 = board_copy[row_move][column]
+                row_move -= 1
+                if row_move == 0 and board_copy[row_move][column] != 'X':
+                    popped = board_copy[row_move][column]
+                temp_2 = board_copy[row_move][column]
+                board_copy[row_move][column] = temp_1
+                temp_1 = temp_2
+
+        # Backwards
+        if direction == 'B':
+            while temp_1 != 'X' and row_move < 6:
+                temp_1 = board_copy[row_move][column]
+                row_move += 1
+                if row_move == 6 and board_copy[row_move][column] != 'X':
+                    popped = board_copy[row_move][column]
+                temp_2 = board_copy[row_move][column]
+                board_copy[row_move][column] = temp_1
+                temp_1 = temp_2
+
+        board_copy[row][column] = 'X'
+        self.set_possible(board_copy)
+        return popped
 
     # decrement set methods
     def decrement_count_black(self):
@@ -556,8 +581,8 @@ class Player:
 
 
 def main():
-    """TODO"""
-    b = KubaGame(('Sarah', 'B'), ('Jamal', 'W'))
+    """Print testing function"""
+    pass
 
 
 if __name__ == '__main__':

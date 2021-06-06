@@ -245,10 +245,6 @@ class KubaGame:
 
         return True
 
-    def make_move_helper(self):
-        """TODO"""
-        pass
-
     def check_right(self, coordinates):
         """
         Purpose: This method checks if there is a valid space to the right of a marble for a valid pushing move.
@@ -440,7 +436,6 @@ class Board:
         :return: popped - the marble that was popped from the array
         """
         popped = None
-        temp_1 = None
         row, column = coordinates
         column_move = column
         row_move = row
@@ -499,7 +494,6 @@ class Board:
     def decrement_count_black(self):
         """
         Purpose: To decrement the count of black marbles on the current self._board.
-
         :return: None
         """
         self._B -= 1
@@ -507,7 +501,6 @@ class Board:
     def decrement_count_white(self):
         """
         Purpose: To decrement the count of black marbles on the current self._board.
-
         :return: None
         """
         self._W -= 1
@@ -515,7 +508,6 @@ class Board:
     def decrement_count_red(self):
         """
         Purpose: To decrement the count of black marbles on the current self._board.
-
         :return: None
         """
         self._R -= 1
@@ -582,27 +574,8 @@ class Player:
 
 def main():
     """Print testing function"""
-    game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-    game.make_move('Jane', (0, 0), 'B')
-    game.make_move('Richard', (0, 5), 'B')
-    game.make_move('Jane', (1, 0), 'R')
-    print(game.get_board().get_board())
-    game.make_move('Richard', (1, 5), 'B')
-    print(game.get_board().get_board())
-    game.make_move('Jane', (1, 1), 'R')
-    print(game.get_board().get_board())
-    game.make_move('Richard', (2, 5), 'B')
-    print(game.get_board().get_board())
-    game.make_move('Jane', (1, 2), 'R')
-    print(game.get_board().get_board())
-    game.make_move('Richard', (3, 5), 'B')
-    print(game.get_board().get_board())
-    game.make_move('Jane', (1, 3), 'R')
-    print(game.get_board().get_board())
-    game.make_move('Richard', (4, 5), 'B')
-    print(game.get_board().get_board())
+    pass
 
-    print(game.get_player_b().get_captured())
 
 if __name__ == '__main__':
     main()

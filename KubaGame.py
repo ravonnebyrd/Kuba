@@ -230,7 +230,7 @@ class KubaGame:
 
         # Evaluate a win by player's captured count.
             # If win, set new winner.
-        if playername == self.get_player_a():
+        if playername == self.get_player_a().get_name():
             if self.get_player_a().get_captured() == 7:
                 self.set_winner(playername)
         else:
@@ -239,6 +239,18 @@ class KubaGame:
 
         # Evaluate a win by opposing player's marble count.
             # If win (as in opponent has no more marbles), set new winner.
+        if playername == self.get_player_a().get_name():
+            if self.get_player_a().get_color() == 'B':
+                if self.get_board().get_count_white() == 0:
+                    self.set_winner(playername)
+            elif self.get_board().get_count_black() == 0:
+                self.set_winner(playername)
+        else:
+            if self.get_player_b().get_color() == 'B':
+                if self.get_board().get_count_white() == 0:
+                    self.set_winner(playername)
+            elif self.get_board().get_count_black() == 0:
+                self.set_winner(playername)
 
         # Set turn to next player.
         if playername == self.get_player_a().get_name():
@@ -577,7 +589,6 @@ class Player:
 
 def main():
     """Print testing function"""
-    pass
 
 
 if __name__ == '__main__':

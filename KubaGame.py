@@ -163,14 +163,14 @@ class KubaGame:
                 return False
 
         # If marble is surrounded, declare game winner and return False.
-        if not self.check_right(coordinates) and not self.check_left(coordinates) and not \
-                self.check_bottom(coordinates) and not self.check_top(coordinates):
-            if playername == self.get_player_a().get_name():
-                self.set_winner(self.get_player_b().get_name())
-                return False
-            else:
-                self.set_winner(self.get_player_a().get_name())
-                return False
+        # if not self.check_right(coordinates) and not self.check_left(coordinates) and not \
+        #        self.check_bottom(coordinates) and not self.check_top(coordinates):
+        #    if playername == self.get_player_a().get_name():
+        #        self.set_winner(self.get_player_b().get_name())
+        #        return False
+        #    else:
+        #        self.set_winner(self.get_player_a().get_name())
+        #        return False
 
         # if direction is 'L', and player has a marble blocking to the right
         if direction == 'L':
@@ -449,8 +449,8 @@ class Board:
 
         # Left
         if direction == 'L':
+            temp_1 = board_copy[row][column_move]
             while temp_1 != 'X' and column_move > 0:
-                temp_1 = board_copy[row][column_move]
                 column_move -= 1
                 if column_move == 0 and board_copy[row][column_move] != 'X':
                     popped = board_copy[row][column_move]
@@ -460,8 +460,8 @@ class Board:
 
         # Right
         if direction == 'R':
+            temp_1 = board_copy[row][column_move]
             while temp_1 != 'X' and column_move < 6:
-                temp_1 = board_copy[row][column_move]
                 column_move += 1
                 if column_move == 6 and board_copy[row][column_move] != 'X':
                     popped = board_copy[row][column_move]
@@ -471,8 +471,8 @@ class Board:
 
         # Forwards
         if direction == 'F':
+            temp_1 = board_copy[row_move][column]
             while temp_1 != 'X' and row_move > 0:
-                temp_1 = board_copy[row_move][column]
                 row_move -= 1
                 if row_move == 0 and board_copy[row_move][column] != 'X':
                     popped = board_copy[row_move][column]
@@ -482,8 +482,8 @@ class Board:
 
         # Backwards
         if direction == 'B':
+            temp_1 = board_copy[row_move][column]
             while temp_1 != 'X' and row_move < 6:
-                temp_1 = board_copy[row_move][column]
                 row_move += 1
                 if row_move == 6 and board_copy[row_move][column] != 'X':
                     popped = board_copy[row_move][column]
@@ -582,8 +582,27 @@ class Player:
 
 def main():
     """Print testing function"""
-    pass
+    game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+    game.make_move('Jane', (0, 0), 'B')
+    game.make_move('Richard', (0, 5), 'B')
+    game.make_move('Jane', (1, 0), 'R')
+    print(game.get_board().get_board())
+    game.make_move('Richard', (1, 5), 'B')
+    print(game.get_board().get_board())
+    game.make_move('Jane', (1, 1), 'R')
+    print(game.get_board().get_board())
+    game.make_move('Richard', (2, 5), 'B')
+    print(game.get_board().get_board())
+    game.make_move('Jane', (1, 2), 'R')
+    print(game.get_board().get_board())
+    game.make_move('Richard', (3, 5), 'B')
+    print(game.get_board().get_board())
+    game.make_move('Jane', (1, 3), 'R')
+    print(game.get_board().get_board())
+    game.make_move('Richard', (4, 5), 'B')
+    print(game.get_board().get_board())
 
+    print(game.get_player_b().get_captured())
 
 if __name__ == '__main__':
     main()

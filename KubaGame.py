@@ -237,6 +237,9 @@ class KubaGame:
             if self.get_player_b().get_captured() == 7:
                 self.set_winner(playername)
 
+        # Evaluate a win by opposing player's marble count.
+            # If win (as in opponent has no more marbles), set new winner.
+
         # Set turn to next player.
         if playername == self.get_player_a().get_name():
             self.set_turn(self.get_player_b().get_name())

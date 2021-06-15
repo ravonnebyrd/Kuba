@@ -162,15 +162,13 @@ class KubaGame:
             if self.get_marble(coordinates) != self.get_player_b().get_color():
                 return False
 
-        # If marble is surrounded, declare game winner and return False.
-        # if not self.check_right(coordinates) and not self.check_left(coordinates) and not \
-        #        self.check_bottom(coordinates) and not self.check_top(coordinates):
-        #    if playername == self.get_player_a().get_name():
-        #        self.set_winner(self.get_player_b().get_name())
-        #        return False
-        #    else:
-        #        self.set_winner(self.get_player_a().get_name())
-        #        return False
+        # If all the player's marbles have only invalid moves available, declare game winner and return False.
+        if not self.legal_moves_available(playername):
+            if playername == self.get_player_a().get_name():
+                self.set_winner(self.get_player_b().get_name())
+            else:
+                self.set_winner(self.get_player_a().get_name())
+            return False
 
         # if direction is 'L', and player has a marble blocking to the right
         if direction == 'L':
@@ -254,11 +252,90 @@ class KubaGame:
 
         # Set turn to next player.
         if playername == self.get_player_a().get_name():
-            self.set_turn(self.get_player_b().get_name())
+            if popped == 'R' or popped == self.get_player_b().get_color():
+                self.set_turn(self.get_player_a().get_name())
+            else:
+                self.set_turn(self.get_player_b().get_name())
         else:
-            self.set_turn(self.get_player_a().get_name())
+            if popped == 'R' or popped == self.get_player_a().get_color():
+                self.set_turn(self.get_player_b().get_name())
+            else:
+                self.set_turn(self.get_player_a().get_name())
 
         return True
+
+    def legal_moves_available(self, playername):
+        """
+        Purpose: This method checks all of the player's marbles on the board, to see if a player has no legal moves
+        available.
+        :return: True if a moves is available
+                 False if a player has no moves available on the board.
+        """
+        if playername == self.get_player_a().get_name():
+            color = self.get_player_a().get_color()
+        else:
+            color = self.get_player_b().get_color()
+
+        return self.recursive_marble_check(color)
+
+    def recursive_marble_check(self, color, index=0, legal=None):
+        """
+        Purpose: Helper function to recursive_legal_moves_available(). Will check all of the marbles on the board
+        :return: True if a moves is available
+                 False if a player has no moves available on the board.
+        """
+        # base case 1 - a legal move has already been found
+        if legal is True:
+            return True
+
+        # base case 2 - checking the last square of the game board
+        if self.get_board().get_coordinates()[index] == (6, 6):
+            if self.get_marble(self.get_board().get_coordinates()[index]) == color:
+                if self.check_right(self.get_board().get_coordinates()[index]):
+                    popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'L')
+                    if popped != color and popped is not None:
+                        legal = True
+                if self.check_bottom(self.get_board().get_coordinates()[index]):
+                    popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'F')
+                    if popped != color and popped is not None:
+                        legal = True
+
+            if legal:
+                return True
+            else:
+                return False
+
+        # check if marble is player's own marble
+        # if not, jump to return
+        if self.get_marble(self.get_board().get_coordinates()[index]) != color:
+            return self.recursive_marble_check(color, index + 1, legal)
+
+        # No legal moves because all surrounded
+        if not self.check_right(self.get_board().get_coordinates()[index]) and not \
+                self.check_left(self.get_board().get_coordinates()[index]) and not \
+                self.check_bottom(self.get_board().get_coordinates()[index]) and not \
+                self.check_top(self.get_board().get_coordinates()[index]):
+            return self.recursive_marble_check(color, index + 1, legal)
+
+        # No legal moves because player will push their own marble off the board
+        if self.check_right(self.get_board().get_coordinates()[index]):
+            popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'L')
+            if popped != color and popped is not None:
+                legal = True
+        if self.check_left(self.get_board().get_coordinates()[index]):
+            popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'R')
+            if popped != color and popped is not None:
+                legal = True
+        if self.check_bottom(self.get_board().get_coordinates()[index]):
+            popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'F')
+            if popped != color and popped is not None:
+                legal = True
+        if self.check_top(self.get_board().get_coordinates()[index]):
+            popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'B')
+            if popped != color and popped is not None:
+                legal = True
+
+        return self.recursive_marble_check(color, index + 1, legal)
 
     def check_right(self, coordinates):
         """

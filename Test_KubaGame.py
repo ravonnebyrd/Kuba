@@ -203,7 +203,7 @@ class TestKubaGame(unittest.TestCase):
         game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
         self.assertTrue(game.make_move('Jane', (0, 0), 'B'))
 
-    # test turns at the beginning of the game - first player
+    # test turns at the beginning of the game - second player
     def test_make_move_15(self):
         game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
         self.assertTrue(game.make_move('Richard', (0, 5), 'B'))
@@ -236,6 +236,49 @@ class TestKubaGame(unittest.TestCase):
         game.make_move('Jane', (1, 6), 'F')
         self.assertEqual(game.get_winner(), 'Jane')
 
+    # test trying to make a move after game has been won
+    def test_make_move_18(self):
+        game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+        game.get_board().set_board([
+            ['W', 'W', 'X', 'X', 'X', 'X', 'B'],
+            ['W', 'X', 'X', 'R', 'X', 'X', 'W'],
+            ['X', 'X', 'R', 'R', 'R', 'X', 'X'],
+            ['X', 'R', 'R', 'R', 'R', 'R', 'X'],
+            ['X', 'X', 'R', 'R', 'R', 'X', 'X'],
+            ['X', 'X', 'X', 'R', 'X', 'W', 'W'],
+            ['X', 'X', 'X', 'X', 'X', 'W', 'W']
+        ])
+        game.get_board().decrement_count_black()
+        game.get_board().decrement_count_black()
+        game.get_board().decrement_count_black()
+        game.get_board().decrement_count_black()
+        game.get_board().decrement_count_black()
+        game.get_board().decrement_count_black()
+        game.get_board().decrement_count_black()
+        game.make_move('Jane', (1, 6), 'F')
+        self.assertFalse(game.make_move('Richard', (0, 6), 'L'))
 
+    # test trying to make a move that results in own marble being knocked off
+    def test_make_move_19(self):
+        # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+        pass
+
+    # test getting an extra turn after a successful move - player A
+    def test_make_move_20(self):
+        # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+        pass
+
+    # test getting an extra turn after a successful move - player B
+    def test_make_move_21(self):
+        # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+        pass
+
+    # test other player making a move after other player got 2 turns
+    def test_make_move_22(self):
+        # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+        pass
+
+
+# test 13, 19-22
 if __name__ == '__main__':
     unittest.main()

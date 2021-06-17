@@ -111,7 +111,7 @@ class TestKubaGame(unittest.TestCase):
         game.make_move('Jane', (3, 3), 'L')
         self.assertEqual(game.get_player_a().get_captured(), 2)
 
-    # test undoing previous move error
+    # test undoing previous move error - Ko Rule
     def test_make_move_10(self):
         game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
         game.make_move('Jane', (0, 0), 'R')
@@ -196,7 +196,18 @@ class TestKubaGame(unittest.TestCase):
 
     # test win by having no legal moves available - no marbles can move
     def test_make_move_13(self):
-        pass
+        game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+        game.get_board().set_board([
+            ['X', 'B', 'X', 'X', 'R', 'W', 'R'],
+            ['B', 'W', 'B', 'X', 'X', 'R', 'X'],
+            ['X', 'B', 'X', 'X', 'X', 'B', 'X'],
+            ['X', 'R', 'R', 'X', 'R', 'R', 'X'],
+            ['X', 'X', 'R', 'X', 'R', 'R', 'X'],
+            ['B', 'B', 'X', 'R', 'X', 'B', 'X'],
+            ['X', 'X', 'X', 'X', 'R', 'W', 'R']
+        ])
+        self.assertFalse(game.make_move('Jane', (1, 1), 'L'))
+        self.assertEqual(game.get_winner(), 'Richard')
 
     # test turns at the beginning of the game - first player
     def test_make_move_14(self):

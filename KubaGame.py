@@ -317,23 +317,31 @@ class KubaGame:
                 self.check_top(self.get_board().get_coordinates()[index]):
             return self.recursive_marble_check(color, index + 1, legal)
 
-        # No legal moves because player will push their own marble off the board
+        # Is a legal moves if player pushes opponent/neutral marble off the board
+        #   and move upholds Ko Rule
         if self.check_right(self.get_board().get_coordinates()[index]):
             popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'L')
-            if popped != color and popped is not None:
-                legal = True
+            if popped != color:
+                if self.get_board().get_possible() != self.get_board().get_previous():
+                    legal = True
+
         if self.check_left(self.get_board().get_coordinates()[index]):
             popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'R')
-            if popped != color and popped is not None:
-                legal = True
+            if popped != color:
+                if self.get_board().get_possible() != self.get_board().get_previous():
+                    legal = True
+
         if self.check_bottom(self.get_board().get_coordinates()[index]):
             popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'F')
-            if popped != color and popped is not None:
-                legal = True
+            if popped != color:
+                if self.get_board().get_possible() != self.get_board().get_previous():
+                    legal = True
+
         if self.check_top(self.get_board().get_coordinates()[index]):
             popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'B')
-            if popped != color and popped is not None:
-                legal = True
+            if popped != color:
+                if self.get_board().get_possible() != self.get_board().get_previous():
+                    legal = True
 
         return self.recursive_marble_check(color, index + 1, legal)
 
@@ -666,6 +674,18 @@ class Player:
 
 def main():
     """Print testing function"""
+    game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+    game.get_board().set_board([
+        ['X', 'B', 'X', 'X', 'R', 'W', 'R'],
+        ['B', 'W', 'B', 'X', 'X', 'R', 'X'],
+        ['X', 'B', 'X', 'X', 'X', 'B', 'X'],
+        ['X', 'R', 'R', 'X', 'R', 'R', 'X'],
+        ['X', 'X', 'R', 'X', 'R', 'R', 'X'],
+        ['B', 'B', 'X', 'R', 'X', 'B', 'X'],
+        ['X', 'X', 'X', 'X', 'R', 'W', 'R']
+    ])
+    print(game.make_move('Jane', (1, 1), 'L'))
+    print(game.get_winner())
 
 
 if __name__ == '__main__':

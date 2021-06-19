@@ -53,63 +53,38 @@ class TestKubaGame(unittest.TestCase):
         game.make_move('Richard', (1, 5), 'B')
         game.make_move('Jane', (1, 1), 'R')
         game.make_move('Richard', (2, 5), 'B')
+        game.make_move('Richard', (0, 6), 'B')
         game.make_move('Jane', (1, 2), 'R')
-        game.make_move('Richard', (3, 5), 'B')
+        game.make_move('Richard', (1, 6), 'B')
         game.make_move('Jane', (1, 3), 'R')
-        game.make_move('Richard', (4, 5), 'B')
+        game.make_move('Richard', (6, 0), 'R')
         game.make_move('Jane', (1, 4), 'R')
         self.assertEqual(game.get_player_a().get_captured(), 1)
 
     # test capture top
     def test_make_move_8(self):
         game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-        game.make_move('Jane', (0, 0), 'B')
-        game.make_move('Richard', (0, 5), 'B')
-        game.make_move('Jane', (1, 0), 'R')
-        game.make_move('Richard', (1, 5), 'B')
-        game.make_move('Jane', (1, 1), 'R')
-        game.make_move('Richard', (2, 5), 'B')
-        game.make_move('Jane', (1, 2), 'R')
-        game.make_move('Richard', (3, 5), 'B')
-        game.make_move('Jane', (1, 3), 'R')
-        game.make_move('Richard', (4, 5), 'B')
-        game.make_move('Jane', (1, 4), 'R')
-        game.make_move('Richard', (5, 0), 'R')
-        game.make_move('Jane', (0, 1), 'B')
-        game.make_move('Richard', (5, 2), 'F')
-        game.make_move('Jane', (1, 5), 'B')
-        game.make_move('Richard', (4, 2), 'F')
-        game.make_move('Jane', (2, 5), 'B')
-        game.make_move('Richard', (3, 2), 'F')
-        self.assertEqual(game.get_player_b().get_captured(), 2)
+        game.make_move('Richard', (6, 0), 'F')
+        game.make_move('Jane', (6, 5), 'F')
+        game.make_move('Richard', (5, 0), 'F')
+        game.make_move('Jane', (5, 5), 'F')
+        game.make_move('Richard', (4, 0), 'F')
+        game.make_move('Jane', (4, 5), 'F')
+        game.make_move('Jane', (3, 5), 'F')
+        game.make_move('Jane', (2, 5), 'F')
+        self.assertEqual(game.get_player_a().get_captured(), 1)
 
     # test capture left
     def test_make_move_9(self):
         game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-        game.make_move('Jane', (0, 0), 'B')
-        game.make_move('Richard', (0, 5), 'B')
-        game.make_move('Jane', (1, 0), 'R')
-        game.make_move('Richard', (1, 5), 'B')
-        game.make_move('Jane', (1, 1), 'R')
-        game.make_move('Richard', (2, 5), 'B')
-        game.make_move('Jane', (1, 2), 'R')
-        game.make_move('Richard', (3, 5), 'B')
-        game.make_move('Jane', (1, 3), 'R')
-        game.make_move('Richard', (4, 5), 'B')
-        game.make_move('Jane', (1, 4), 'R')
-        game.make_move('Richard', (5, 0), 'R')
-        game.make_move('Jane', (0, 1), 'B')
-        game.make_move('Richard', (5, 2), 'F')
-        game.make_move('Jane', (1, 5), 'B')
-        game.make_move('Richard', (4, 2), 'F')
-        game.make_move('Jane', (2, 5), 'B')
-        game.make_move('Richard', (3, 2), 'F')
-        game.make_move('Jane', (3, 5), 'L')
-        game.make_move('Richard', (6, 1), 'F')
-        game.make_move('Jane', (3, 4), 'L')
-        game.make_move('Richard', (4, 1), 'R')
-        game.make_move('Jane', (3, 3), 'L')
-        self.assertEqual(game.get_player_a().get_captured(), 2)
+        game.make_move('Richard', (1, 6), 'L')
+        game.make_move('Jane', (5, 6), 'L')
+        game.make_move('Richard', (1, 5), 'L')
+        game.make_move('Jane', (5, 5), 'L')
+        game.make_move('Richard', (1, 4), 'L')
+        game.make_move('Richard', (1, 3), 'L')
+        game.make_move('Richard', (1, 2), 'L')
+        self.assertEqual(game.get_player_b().get_captured(), 1)
 
     # test undoing previous move error - Ko Rule
     def test_make_move_10(self):
@@ -123,53 +98,22 @@ class TestKubaGame(unittest.TestCase):
     # test win by capturing 7 R marbles
     def test_make_move_11(self):
         game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-        game.make_move('Jane', (0, 0), 'B')
-        game.make_move('Richard', (0, 5), 'B')
-        game.make_move('Jane', (1, 0), 'R')
-        game.make_move('Richard', (1, 5), 'B')
-        game.make_move('Jane', (1, 1), 'R')
-        game.make_move('Richard', (2, 5), 'B')
-        game.make_move('Jane', (1, 2), 'R')
-        game.make_move('Richard', (3, 5), 'B')
-        game.make_move('Jane', (1, 3), 'R')
-        game.make_move('Richard', (4, 5), 'B')
-        game.make_move('Jane', (1, 4), 'R')
-        game.make_move('Richard', (5, 0), 'R')
-        game.make_move('Jane', (0, 1), 'B')
-        game.make_move('Richard', (5, 2), 'F')
-        game.make_move('Jane', (1, 5), 'B')
-        game.make_move('Richard', (4, 2), 'F')
-        game.make_move('Jane', (2, 5), 'B')
-        game.make_move('Richard', (3, 2), 'F')
-        game.make_move('Jane', (3, 5), 'L')
-        game.make_move('Richard', (6, 1), 'F')
-        game.make_move('Jane', (3, 4), 'L')
-        game.make_move('Richard', (4, 1), 'R')
-        game.make_move('Jane', (3, 3), 'L')
-        game.make_move('Richard', (4, 2), 'R')
-        game.make_move('Jane', (3, 2), 'L')
-        game.make_move('Richard', (4, 3), 'R')
-        game.make_move('Jane', (3, 1), 'L')
-        game.make_move('Richard', (4, 4), 'R')
-        game.make_move('Jane', (6, 6), 'F')
-        game.make_move('Richard', (2, 2), 'R')
-        game.make_move('Jane', (2, 0), 'R')
-        game.make_move('Richard', (2, 3), 'R')
-        game.make_move('Jane', (2, 1), 'R')
-        game.make_move('Richard', (2, 4), 'R')
-        game.make_move('Jane', (2, 2), 'F')
-        game.make_move('Richard', (2, 5), 'R')
-        game.make_move('Jane', (1, 2), 'F')
-        game.make_move('Richard', (5, 1), 'R')
-        game.make_move('Jane', (1, 6), 'L')
-        game.make_move('Richard', (5, 2), 'R')
-        game.make_move('Jane', (5, 6), 'F')
-        game.make_move('Richard', (0, 6), 'L')
-        game.make_move('Jane', (4, 6), 'F')
-        game.make_move('Richard', (6, 0), 'R')
-        game.make_move('Jane', (3, 6), 'F')
-        game.make_move('Richard', (6, 1), 'R')
-        game.make_move('Jane', (2, 6), 'F')
+        game.get_board().set_board([
+            ['W', 'R', 'X', 'X', 'X', 'B', 'B'],
+            ['W', 'W', 'X', 'R', 'X', 'B', 'B'],
+            ['X', 'X', 'X', 'X', 'R', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'R', 'R', 'X'],
+            ['X', 'X', 'X', 'X', 'W', 'X', 'X'],
+            ['B', 'B', 'X', 'R', 'X', 'W', 'W'],
+            ['B', 'B', 'X', 'X', 'X', 'W', 'W']
+        ])
+        game.get_player_a().increment_captured()
+        game.get_player_a().increment_captured()
+        game.get_player_a().increment_captured()
+        game.get_player_a().increment_captured()
+        game.get_player_a().increment_captured()
+        game.get_player_a().increment_captured()
+        game.make_move('Jane', (1, 1), 'F')
         self.assertEqual(game.get_winner(), 'Jane')
 
     # test win by clearing opponent's marbles A
@@ -269,27 +213,19 @@ class TestKubaGame(unittest.TestCase):
         game.make_move('Jane', (1, 6), 'F')
         self.assertFalse(game.make_move('Richard', (0, 6), 'L'))
 
-    # test trying to make a move that results in own marble being knocked off
+    # test getting an extra turn after a successful move - player A
     def test_make_move_19(self):
         # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-        pass
-
-    # test getting an extra turn after a successful move - player A
-    def test_make_move_20(self):
-        # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-        pass
-
-    # test getting an extra turn after a successful move - player B
-    def test_make_move_21(self):
-        # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-        pass
-
-    # test other player making a move after other player got 2 turns
-    def test_make_move_22(self):
-        # game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-        pass
+        game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
+        game.make_move('Jane', (0, 0), 'B')
+        game.make_move('Richard', (0, 5), 'B')
+        game.make_move('Jane', (1, 0), 'R')
+        game.make_move('Richard', (1, 5), 'B')
+        game.make_move('Jane', (1, 1), 'R')
+        game.make_move('Richard', (2, 5), 'B')
+        self.assertFalse(game.make_move('Jane', (1, 2), 'R'))
+        self.assertEqual(game.get_current_turn(), 'Richard')
 
 
-# test 13, 19-22
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,4 @@
 # Author: Ravonne Byrd
-# Date: June 2, 2021
 # Description: The KubaGame class represents a game round of Kuba. It uses helper classes Board and
 #              Player to instantiate the board and player objects. The goal of the game is to be the first player to
 #              capture 7 red marbles, in order to win. Although not required, a win can also be achieved by the opposing
@@ -30,7 +29,6 @@ class KubaGame:
         Attributes: self._board - The game board (Board object).
                     self._Current_turn - The current player whose turn it is, else None is game has just begun (string).
                     self._winner - The winner of the game, else None if no winner is established yet (string).
-
 
         :param player_a: A tuple containing the player playername and their marble color. (ex: ('PlayerA', 'B'))
         :param player_b: A tuple containing the player playername and their marble color. (ex: ('PlayerB', 'W'))
@@ -293,12 +291,15 @@ class KubaGame:
             if self.get_marble(self.get_board().get_coordinates()[index]) == color:
                 if self.check_right(self.get_board().get_coordinates()[index]):
                     popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'L')
-                    if popped != color and popped is not None:
-                        legal = True
+                    if popped != color:
+                        if self.get_board().get_possible() != self.get_board().get_previous():
+                            legal = True
+
                 if self.check_bottom(self.get_board().get_coordinates()[index]):
                     popped = self.get_board().fake_move(self.get_board().get_coordinates()[index], 'F')
-                    if popped != color and popped is not None:
-                        legal = True
+                    if popped != color:
+                        if self.get_board().get_possible() != self.get_board().get_previous():
+                            legal = True
 
             if legal:
                 return True
@@ -674,18 +675,7 @@ class Player:
 
 def main():
     """Print testing function"""
-    game = KubaGame(('Jane', 'W'), ('Richard', 'B'))
-    game.get_board().set_board([
-        ['X', 'B', 'X', 'X', 'R', 'W', 'R'],
-        ['B', 'W', 'B', 'X', 'X', 'R', 'X'],
-        ['X', 'B', 'X', 'X', 'X', 'B', 'X'],
-        ['X', 'R', 'R', 'X', 'R', 'R', 'X'],
-        ['X', 'X', 'R', 'X', 'R', 'R', 'X'],
-        ['B', 'B', 'X', 'R', 'X', 'B', 'X'],
-        ['X', 'X', 'X', 'X', 'R', 'W', 'R']
-    ])
-    print(game.make_move('Jane', (1, 1), 'L'))
-    print(game.get_winner())
+    pass
 
 
 if __name__ == '__main__':

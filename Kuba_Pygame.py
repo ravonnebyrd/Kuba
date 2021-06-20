@@ -19,8 +19,8 @@ BACKGROUND_COLOR = BLACK_BACKGROUND
 SQUARE_COLOR = (255, 255, 255)
 
 # grid constants
-MARGIN_LEFT = 313
-MARGIN_TOP = 113
+MARGIN_X = 313
+MARGIN_Y = 113
 SQUARE_WIDTH = SQUARE_HEIGHT = 80
 SQUARE_MARGIN = 2
 COLUMNS = ROWS = 7
@@ -40,8 +40,8 @@ def draw_grid():
     board = Board()
     grid = board.get_board()
 
-    left = MARGIN_LEFT
-    top = MARGIN_TOP
+    left = MARGIN_X
+    top = MARGIN_Y
 
     for row in range(ROWS):
         for column in range(COLUMNS):
@@ -56,7 +56,7 @@ def draw_grid():
                 draw_circle(WHITE, ((left + SQUARE_WIDTH / 2), (top + SQUARE_HEIGHT / 2)), 30)
 
             left = left + SQUARE_WIDTH + SQUARE_MARGIN
-        left = MARGIN_LEFT
+        left = MARGIN_X
         top = top + SQUARE_HEIGHT + SQUARE_MARGIN
 
 
@@ -77,9 +77,9 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 position = pygame.mouse.get_pos()
                 row, column = position
-                row = int(row / (HEIGHT + SQUARE_MARGIN))
-                column = int(column / (WIDTH + SQUARE_MARGIN))
-                print('Row: ', row, ', Column: ', column)
+                column_new = int((row - MARGIN_X) / (SQUARE_HEIGHT + SQUARE_MARGIN))
+                row_new = int((column - MARGIN_Y) / (SQUARE_HEIGHT + SQUARE_MARGIN))
+                print('Row: ', row_new, ', Column: ', column_new)
 
         setup_window()
 
